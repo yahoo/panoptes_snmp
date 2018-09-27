@@ -1,0 +1,43 @@
+## Credits
+
+This project depends on and/or contains code from the following projects:
+
+- Net-SNMP (BSD)
+- Easy SNMP (BSD)
+- flake8 (MIT)
+- mccabe (MIT)
+- pep8 (MIT)
+- pyflakes (MIT)
+- cov-core (MIT)
+- coverage (Apache)
+- py (MIT)
+- pytest (MIT)
+- pytest-cov (BSD)
+- execnet (MIT)
+- pytest-cache (MIT)
+- pytest-flake8 (BSD)
+- pytest-sugar (BSD)
+- termcolor (MIT)
+- alabaster (BSD)
+- Babel (BSD)
+- docutils (BSD)
+- Jinja2 (BSD)
+- MarkupSafe (BSD)
+- Pygments (BSD)
+- pytz (MIT)
+- six (MIT)
+- snowballstemmer (BSD)
+- Sphinx (BSD)
+- sphinx-rtd-theme (MIT)
+- ipython (BSD)
+- attrs (MIT)
+- enum34 (BSD)
+- funcsigs (Apache)
+- pluggy (MIT)
+- pycodestyle (MIT)
+
+## Licences
+
+- [Apache](https://opensource.org/licenses/Apache-2.0)
+- [BSD](https://opensource.org/licenses/BSD-3-Clause)
+- [MIT](https://opensource.org/licenses/MIT)
