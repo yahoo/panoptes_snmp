@@ -18,23 +18,6 @@ This project depends on and/or contains code from the following projects:
 - pytest-flake8 (BSD)
 - pytest-sugar (BSD)
 - termcolor (MIT)
-- alabaster (BSD)
-- Babel (BSD)
-- docutils (BSD)
-- Jinja2 (BSD)
-- MarkupSafe (BSD)
-- Pygments (BSD)
-- pytz (MIT)
-- six (MIT)
-- snowballstemmer (BSD)
-- Sphinx (BSD)
-- sphinx-rtd-theme (MIT)
-- ipython (BSD)
-- attrs (MIT)
-- enum34 (BSD)
-- funcsigs (Apache)
-- pluggy (MIT)
-- pycodestyle (MIT)
 
 ## Licences
 
