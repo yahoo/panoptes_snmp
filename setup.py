@@ -114,12 +114,12 @@ class BuildEasySNMPExt(build_ext):
                                "-redhat-linux {1} {2}".format(MACHINE, configureargs, featureflags).split(' ')
 
                 configurecmd += ['--with-security-modules=usm tsm']
-                makecmd = ['gmake']
+                makecmd = ['make']
 
                 print(">>>>>>>>>>> Configuring with: {0} in {1}...".format(' '.join(configurecmd), NETSNMP_SRC_PATH))
                 check_call(configurecmd, cwd=NETSNMP_SRC_PATH)
 
-                print(">>>>>>>>>>> Building net-snmp library...")
+                print(">>>>>>>>>>> Building net-snmp library in {}...".format(NETSNMP_SRC_PATH))
                 check_call(makecmd, cwd=NETSNMP_SRC_PATH)
 
                 print(">>>>>>>>>>> Copying shared objects")
