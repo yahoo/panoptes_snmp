@@ -1,3 +1,5 @@
+![Build Status](https://travis-ci.org/yahoo/panoptes_snmp.svg?branch=master)
+
 # Panoptes SNMP
 > A Python wrapper on Net-SNMP
 
