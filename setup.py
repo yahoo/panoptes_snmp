@@ -124,12 +124,13 @@ class BuildEasySNMPExt(build_ext):
                 check_call(makecmd, cwd=NETSNMP_SRC_PATH)
 
                 print(">>>>>>>>>>> Copying shared objects")
-                self.libdir = '{0}/yahoo_panoptes_snmp'.format(self.build_lib)
-                self.copy_file(NETSNMP_SO_PATH, self.libdir)
-                self.copy_file(NETSNMP_SO_PATH, '{0}/libnetsnmp.so.30'.format(self.libdir))
-                self.copy_file(NETSNMP_SO_PATH, '{0}/libnetsnmp.so'.format(self.libdir))
-                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so.30'.format(self.libdir))
-                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so'.format(self.libdir))
+                # self.libdir = '{0}/yahoo_panoptes_snmp'.format(self.build_lib)
+                # self.copy_file(NETSNMP_SO_PATH, self.libdir)
+                # self.copy_file(NETSNMP_SO_PATH, '{0}/libnetsnmp.so.30'.format(self.libdir))
+                # self.copy_file(NETSNMP_SO_PATH, '{0}/libnetsnmp.so'.format(self.libdir))
+                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp')
+                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so.30')
+                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so')
                 print(">>>>>>>>>>> Done building net-snmp library")
 
         if IN_CI_PIPELINE:
