@@ -138,7 +138,7 @@ setup(
         description='A Python wrapper on Net-SNMP',
         long_description=long_description,
         author='Network Automation @ Oath, Inc.',
-        author_email='network-devel@oath.com',
+        author_email='network-automation@oath.com',
         url='https://github.com/yahoo/panoptes_snmp',
         license='BSD',
         packages=['yahoo_panoptes_snmp'],
