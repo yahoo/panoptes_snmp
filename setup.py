@@ -152,7 +152,7 @@ setup(
             Extension(
                     'yahoo_panoptes_snmp.interface', ['yahoo_panoptes_snmp/interface.c'],
                     library_dirs=libdirs, include_dirs=incdirs, libraries=['netsnmp'],
-                    extra_compile_args=['-Wno-unused-function']
+                    extra_compile_args=['-Wno-unused-function', '-lpthread']
             )
         ],
         classifiers=[
