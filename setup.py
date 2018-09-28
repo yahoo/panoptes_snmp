@@ -107,8 +107,9 @@ class BuildEasySNMPExt(build_ext):
                                 "--with-persistent-directory=/var/net-snmp --with-sys-location=unknown " \
                                 "--with-transports=TLSTCP --without-rpm"
 
-                featureflags = '--enable-reentrant --disable-debugging --disable-embedded-perl --enable-static=no ' \
-                               '--disable-snmpv1 --disable-applications --disable-manuals --with-libs=-lpthread'
+                featureflags = '--enable-reentrant --disable-debugging --disable-embedded-perl ' \
+                               '--without-perl-modules --enable-static=no --disable-snmpv1 --disable-applications ' \
+                               '--disable-manuals --with-libs=-lpthread'
 
                 configurecmd = "./configure --build={0}-redhat-linux --host={0}-redhat-linux --target={0}" \
                                "-redhat-linux {1} {2}".format(MACHINE, configureargs, featureflags).split(' ')
