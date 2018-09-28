@@ -95,7 +95,7 @@ class BuildEasySNMPExt(build_ext):
 
         if IN_CI_PIPELINE:
             self.libdir = '{0}/yahoo_panoptes_snmp'.format(self.build_lib)
-            self.library_dirs.insert(0, self.libdir)
+            self.library_dirs.insert(0, 'yahoo_panoptes_snmp')
             self.rpath = ['$ORIGIN']
 
     def run(self):
@@ -128,8 +128,8 @@ class BuildEasySNMPExt(build_ext):
                 # self.copy_file(NETSNMP_SO_PATH, self.libdir)
                 # self.copy_file(NETSNMP_SO_PATH, '{0}/libnetsnmp.so.30'.format(self.libdir))
                 # self.copy_file(NETSNMP_SO_PATH, '{0}/libnetsnmp.so'.format(self.libdir))
-                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp')
-                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so.30')
+                # self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp')
+                # self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so.30')
                 self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so')
                 print(">>>>>>>>>>> Done building net-snmp library")
 
