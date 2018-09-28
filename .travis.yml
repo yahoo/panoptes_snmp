@@ -52,8 +52,9 @@ before_install:
   - echo 'mibs +ALL' > ~/.snmp/snmp.conf
 
 install:
-  # Install the Coveralls library
-  - pip install -r dev-requirements.txt coveralls
+  # Install the build requirements
+  - pip install -r dev-requirements.txt
+  - pip install coveralls
 
 script:
   # Run the unit tests using py.test
