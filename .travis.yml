@@ -53,7 +53,7 @@ before_install:
 
 install:
   # Install the Coveralls library
-  - pip install coveralls
+  - pip install -r dev-requirements.txt coveralls
 
 script:
   # Run the unit tests using py.test
