@@ -11,7 +11,7 @@ before_install:
   # Install build dependencies
   - sudo apt-get update
   - sudo apt-get install -y autoconf libtool make libperl-dev python-dev
-  - sudo apt-get install -y snmpd snmp-mibs-downloader
+  - sudo apt-get install -y snmp snmpd snmp-mibs-downloader
 
   # Start up SNMPD with our test config
   - snmpd -C -c tests/snmpd.conf
