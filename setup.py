@@ -94,8 +94,7 @@ class BuildEasySNMPExt(build_ext):
         build_ext.finalize_options(self)
 
         if IN_CI_PIPELINE:
-            self.libdir = '{0}/yahoo_panoptes_snmp'.format(self.build_lib)
-            self.library_dirs.insert(0, self.libdir)
+            self.library_dirs.insert(0, 'yahoo_panoptes_snmp')
             self.rpath = ['$ORIGIN']
 
     def run(self):
@@ -107,28 +106,24 @@ class BuildEasySNMPExt(build_ext):
                                 "--with-persistent-directory=/var/net-snmp --with-sys-location=unknown " \
                                 "--with-transports=TLSTCP --without-rpm"
 
-                featureflags = '--enable-reentrant --disable-debugging --disable-embedded-perl --enable-static=no ' \
-                               '--disable-snmpv1 --disable-applications --disable-manuals'
+                featureflags = '--enable-reentrant --disable-debugging --disable-embedded-perl ' \
+                               '--without-perl-modules --enable-static=no --disable-snmpv1 --disable-applications ' \
+                               '--disable-manuals --with-libs=-lpthread'
 
                 configurecmd = "./configure --build={0}-redhat-linux --host={0}-redhat-linux --target={0}" \
                                "-redhat-linux {1} {2}".format(MACHINE, configureargs, featureflags).split(' ')
 
                 configurecmd += ['--with-security-modules=usm tsm']
-                makecmd = ['gmake']
+                makecmd = ['make']
 
                 print(">>>>>>>>>>> Configuring with: {0} in {1}...".format(' '.join(configurecmd), NETSNMP_SRC_PATH))
                 check_call(configurecmd, cwd=NETSNMP_SRC_PATH)
 
-                print(">>>>>>>>>>> Building net-snmp library...")
+                print(">>>>>>>>>>> Building net-snmp library in {}...".format(NETSNMP_SRC_PATH))
                 check_call(makecmd, cwd=NETSNMP_SRC_PATH)
 
                 print(">>>>>>>>>>> Copying shared objects")
-                self.libdir = '{0}/yahoo_panoptes_snmp'.format(self.build_lib)
-                self.copy_file(NETSNMP_SO_PATH, self.libdir)
-                self.copy_file(NETSNMP_SO_PATH, '{0}/libnetsnmp.so.30'.format(self.libdir))
-                self.copy_file(NETSNMP_SO_PATH, '{0}/libnetsnmp.so'.format(self.libdir))
-                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so.30'.format(self.libdir))
-                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so'.format(self.libdir))
+                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so')
                 print(">>>>>>>>>>> Done building net-snmp library")
 
         if IN_CI_PIPELINE:

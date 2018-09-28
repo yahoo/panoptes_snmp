@@ -1,73 +1,28 @@
-  language: python
-
+language: python
 python:
-  - 2.7
-  - 3.6
-
+- 2.7
 env:
-  - NET_SNMP_VERSION=5.7.3
-
+- NET_SNMP_VERSION=5.7.3
 before_install:
-  # Install build dependencies
-  - sudo apt-get update
-  - sudo apt-get install -y autoconf libtool make libperl-dev python-dev
-
-  # Download and extract the required version of Net-SNMP
-  - wget http://downloads.sourceforge.net/sourceforge/net-snmp/net-snmp-$NET_SNMP_VERSION.tar.gz
-  - tar zxvf net-snmp-$NET_SNMP_VERSION.tar.gz
-  - cd net-snmp-$NET_SNMP_VERSION
-
-  # Build and install Net-SNMP
-  - autoreconf -f -i
-  - ./configure
-    --prefix=/usr/local
-    --enable-ucd-snmp-compatibility
-    --enable-ipv6
-    --with-default-snmp-version="3"
-    --with-sys-contact="root@localhost"
-    --with-sys-location="Unknown"
-    --with-logfile="/var/log/snmpd.log"
-    --with-mib-modules="host misc/ipfwacc ucd-snmp/diskio tunnel ucd-snmp/dlmod"
-    --with-persistent-directory="/var/net-snmp"
-  - make -j4 NETSNMP_DONT_CHECK_VERSION=1
-  - sudo make install
-  - sudo ldconfig
-  - cd ..
-
-  # Clean up the extracted files
-  - rm -rf net-snmp-$NET_SNMP_VERSION
-
-  # Display the build version of Net-SNMP
-  - net-snmp-config --version
-
-  # Install the SNMP MIBs
-  - sudo apt-get install -y snmp-mibs-downloader
-
-  # Start up SNMPD with our test config
-  - snmpd -C -c tests/snmpd.conf
-
-  # Ensure that all mibs are loaded by the SNMP client/client library
-  # SNMP will prefer $HOME/.snmp/snmp.conf over /usr/local/etc/snmp.conf
-  - mkdir -m 0755 ~/.snmp
-  - echo 'mibs +ALL' > ~/.snmp/snmp.conf
-
+- sudo apt-get update
+- sudo apt-get install -y autoconf libtool make libperl-dev python-dev
+- sudo apt-get install -y snmp snmpd snmp-mibs-downloader
+- snmpd -C -c tests/snmpd.conf
+- mkdir -m 0755 ~/.snmp
+- echo 'mibs +ALL' > ~/.snmp/snmp.conf
 install:
-  # Install the build requirements
-  - pip install -r dev-requirements.txt
-  - pip install coveralls
-
+- pip install -r dev-requirements.txt
+- pip install coveralls
 script:
-  # Run the unit tests using py.test
-  - python setup.py test
-
+- python setup.py test
 after_script:
-  # Stop the SNMPD daemon
-  - pkill snmpd
-
-after_success:
-  # Send coverage statistics to Coveralls
-  coveralls
-
+- pkill snmpd
+after_success: coveralls
 notifications:
-  # Disable email notifications if something fails
   email: false
+deploy:
+  provide: pypi
+  user: "netauto"
+  password:
+    secure: kIDRhXD2f4y9aGoHIHxSUUY/uSKCB8hVNhrM5GG6zGjJw/zmCV2QLc52rP8WslsUDeW9QWPeo3IQXm+NZwj0PQ/Hz0lt9Kw6w1u9viZwIpLqbpnpt4Y+eOiowpbZidk5bknNcjo0rcsNFRuRQZFooPxS8KxuAiiMdKens8ZOEvzLC4rXFSChUjpQcbBYCdbDMEWXHDvSDXvqr5SfT7j1yRPBEIPKUAZRldNg22nq/7uCedlwsRFtHgiZayJHt2WVMsE8WSSDJ6QXrBah5+rS9sr9Gt3cRZEcBK6GTekJ/SqpKLGxjTwGVXBtUrxPoBrYBoYBriCOVN8ayOWipoOXw0mqcDQ9nt6Kf3x42NV1eBsz4MnvBtNyUV+KLqx7jGcInGxjX9W+STx/zem8/DQYVOv/T5Qa9DhUtwAdvxE0Ezc+WRInt2yzMEIoO4mpx/fyhPkbNca8xrCWWGZbcECEt3gxEN3PDCUixyCM2txksB6bqMrHAwt1L3/WSFAsc8izyAcLrp6IdX8mvtWF3kSBf2FGAsETO8W3I7vSb+SjVIiECCh74sVSM3PLBdzGXvBz3r02TMJfqzzG+ED2lIJ6lg1tQkgNCHlpq/HmKWCIraStVRjp9VHJj6LZ47pUyGz+eFCDm+lhhD7lzwvmRcBm0jVmtusZkTFqi4LKxJTllDw=
+  distributions: "sdist bdist_wheel"
