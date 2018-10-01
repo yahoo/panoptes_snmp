@@ -11,7 +11,8 @@ before_install:
 - snmpd -C -c tests/snmpd.conf
 - mkdir -m 0755 ~/.snmp
 - echo 'mibs +ALL' > ~/.snmp/snmp.conf
-- ls /usr/share/snmp/mibs
+- ls -l /usr/share/snmp/mibs
+- ls -l /usr/share/mibs
 - snmpget -v 2c -c public localhost:11161 sysDescr.0
 install:
 - pip install --upgrade pip setuptools tox termcolor virtualenv coveralls
