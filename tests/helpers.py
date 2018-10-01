@@ -29,8 +29,8 @@ def snmp_set_via_cli(oid, value, type):
     process = subprocess.Popen([
         'snmpset', '-v2c', '-c', 'public', 'localhost:11161', oid, type, value
     ], stdout=dev_null, stderr=dev_null)
-    process.communicate()
+    out, error = process.communicate()
     if process.returncode != 0:
         raise SNMPSetCLIError(
-            'failed to set {0} to {1} (type {2})'.format(oid, value, type)
+            'failed to set {0} to {1} (type {2}): {3}/{4}'.format(oid, value, type, out, error)
         )
