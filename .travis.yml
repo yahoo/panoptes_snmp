@@ -3,14 +3,16 @@ python:
 - 2.7
 env:
 - NET_SNMP_VERSION=5.7.3
+- MIBS=+ALL
 before_install:
 - sudo apt-get update
 - sudo apt-get install -y autoconf libtool make libperl-dev python-dev
 - sudo apt-get install -y snmp snmpd snmp-mibs-downloader
 - snmpd -C -c tests/snmpd.conf
-- snmpget -v 2c -c public localhost:11161 1.3.6.1.2.1.1.1.0
 - mkdir -m 0755 ~/.snmp
 - echo 'mibs +ALL' > ~/.snmp/snmp.conf
+- ls /usr/share/snmp/mibs
+- snmpget -v 2c -c public localhost:11161 sysDescr.0
 install:
 - pip install --upgrade pip setuptools tox termcolor virtualenv coveralls
 script:
