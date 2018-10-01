@@ -8,6 +8,7 @@ before_install:
 - sudo apt-get update
 - sudo apt-get install -y autoconf libtool make libperl-dev python-dev
 - sudo apt-get install -y snmp snmpd snmp-mibs-downloader
+- sudo /usr/bin/download-mibs
 - snmpd -C -c tests/snmpd.conf
 - mkdir -m 0755 ~/.snmp
 - echo 'mibs +ALL' > ~/.snmp/snmp.conf
