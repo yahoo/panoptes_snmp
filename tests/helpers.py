@@ -27,7 +27,7 @@ def snmp_set_via_cli(oid, value, type):
     """
     dev_null = open(os.devnull)
     process = subprocess.Popen([
-        'snmpset', '-v2c', '-c', 'public', 'localhost:11161', oid, type, value
+        '/usr/bin/snmpset', '-v2c', '-c', 'public', 'localhost:11161', oid, type, value
     ], stdout=dev_null, stderr=dev_null)
     out, error = process.communicate()
     if process.returncode != 0:
