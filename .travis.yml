@@ -11,7 +11,7 @@ before_install:
 - mkdir -m 0755 ~/.snmp
 - echo 'mibs +ALL' > ~/.snmp/snmp.conf
 install:
-- pip install --upgrade pip setuptools tox virtualenv coveralls
+- pip install --upgrade pip setuptools tox termcolor virtualenv coveralls
 script:
 - tox -v
 after_script:
