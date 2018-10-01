@@ -91,7 +91,7 @@ class BuildEasySNMPExt(build_ext):
 
     def run(self):
         def _compile():
-                print(colored(">>>>>>>>>>> Going to build net-snmp library...", "magenta"))
+                print(colored(">>>>>>>>>>> Going to build net-snmp library", "magenta"))
 
                 configureargs = "--with-defaults --with-default-snmp-version=2 --with-sys-contact=root@localhost " \
                                 "--with-logfile=/var/log/snmpd.log " \
@@ -102,8 +102,8 @@ class BuildEasySNMPExt(build_ext):
                                '--without-perl-modules --enable-static=no --disable-snmpv1 --disable-applications ' \
                                '--disable-manuals --with-libs=-lpthread'
 
-                configurecmd = "./configure --build={0}-redhat-linux --host={0}-redhat-linux --target={0}" \
-                               "-redhat-linux {1} {2}".format(MACHINE, configureargs, featureflags).split(' ')
+                configurecmd = "./configure --build={0}-unknown-linux-gnu --host={0}-unknown-linux-gnu " \
+                               "{1} {2}".format(MACHINE, configureargs, featureflags).split(' ')
 
                 configurecmd += ['--with-security-modules=usm tsm']
                 makecmd = ['make']
@@ -112,7 +112,7 @@ class BuildEasySNMPExt(build_ext):
                 with open("/tmp/yahoo-panoptes-snmp-net-snmp-configure-{0}.log".format(BUILD_START_TIME), 'w+') as log:
                    check_call(configurecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
 
-                print(colored(">>>>>>>>>>> Building net-snmp library in {}...".format(NETSNMP_SRC_PATH), "cyan")) 
+                print(colored(">>>>>>>>>>> Building net-snmp library in {}".format(NETSNMP_SRC_PATH), "cyan"))
                 with open("/tmp/yahoo-panoptes-snmp-net-snmp-make.log".format(BUILD_START_TIME), 'w+') as log:
                    check_call(makecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
 
@@ -141,9 +141,9 @@ setup(
         cmdclass={'test': PyTest, 'build_ext': BuildEasySNMPExt},
         ext_modules=[
             Extension(
-                    'yahoo_panoptes_snmp.interface', ['yahoo_panoptes_snmp/interface.c'],
-                    library_dirs=libdirs, include_dirs=incdirs, libraries=['netsnmp'],
-                    extra_compile_args=['-Wno-unused-function']
+                'yahoo_panoptes_snmp.interface', ['yahoo_panoptes_snmp/interface.c'],
+                library_dirs=libdirs, include_dirs=incdirs, libraries=['netsnmp'],
+                extra_compile_args=['-Wno-unused-function']
             )
         ],
         classifiers=[
