@@ -118,6 +118,8 @@ class BuildEasySNMPExt(build_ext):
 
                 print(colored(">>>>>>>>>>> Copying shared objects", "cyan"))
                 self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so.30')
+                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so')
+                self.copy_file(NETSNMP_SO_PATH, '{0}/yahoo_panoptes_snmp/libnetsnmp.so'.format(self.build_lib))
                 self.copy_file(NETSNMP_SO_PATH, '{0}/yahoo_panoptes_snmp/libnetsnmp.so.30'.format(self.build_lib))
                 print(colored(">>>>>>>>>>> Done building net-snmp library", "green"))
 
