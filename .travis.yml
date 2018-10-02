@@ -7,14 +7,17 @@ before_install:
 - sudo apt-get update
 - sudo apt-get install -y autoconf libtool make libperl-dev python-dev
 - sudo apt-get install -y snmp snmpd snmp-mibs-downloader
+- sudo /usr/bin/download-mibs
 - snmpd -C -c tests/snmpd.conf
 - mkdir -m 0755 ~/.snmp
-- echo 'mibs +ALL' > ~/.snmp/snmp.conf
+- mkdir -m 0755 ~/.snmp/mibs
+- cp /usr/share/mibs/ietf/* ~/.snmp/mibs
+- cp /usr/share/snmp/mibs/* ~/.snmp/mibs
+- echo 'mibs +SNMPv2-MIB:NET-SNMP-AGENT-MIB' > ~/.snmp/snmp.conf
 install:
-- pip install -r dev-requirements.txt
-- pip install coveralls
+- pip install --upgrade pip setuptools tox termcolor virtualenv coveralls
 script:
-- python setup.py test
+- tox -v
 after_script:
 - pkill snmpd
 after_success: coveralls
