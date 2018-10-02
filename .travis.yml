@@ -13,6 +13,8 @@ before_install:
 - echo 'mibs +SNMPv2-MIB' > ~/.snmp/snmp.conf
 - ls -l /usr/share/snmp/mibs
 - ls -l /usr/share/mibs
+- ls -l /usr/share/mibs/ietf
+- ls -l /usr/share/mibs/iana
 - snmpget -v 2c -c public localhost:11161 sysDescr.0
 install:
 - pip install --upgrade pip setuptools tox termcolor virtualenv coveralls
