@@ -10,8 +10,6 @@ from subprocess import check_call
 from setuptools import setup, Extension
 from setuptools.command.test import test as TestCommand
 
-from termcolor import colored
-
 version = '0.2.5'
 
 logger = logging.getLogger(__name__)
@@ -91,7 +89,7 @@ class BuildEasySNMPExt(build_ext):
 
     def run(self):
         def _compile():
-                print(colored(">>>>>>>>>>> Going to build net-snmp library", "magenta"))
+                print(">>>>>>>>>>> Going to build net-snmp library")
 
                 configureargs = "--with-defaults --with-default-snmp-version=2 --with-sys-contact=root@localhost " \
                                 "--with-logfile=/var/log/snmpd.log " \
@@ -108,20 +106,20 @@ class BuildEasySNMPExt(build_ext):
                 configurecmd += ['--with-security-modules=usm tsm']
                 makecmd = ['make']
 
-                print(colored(">>>>>>>>>>> Configuring with {0}".format(' '.join(configurecmd)), "cyan"))
+                print(">>>>>>>>>>> Configuring with {0}".format(' '.join(configurecmd)))
                 with open("/tmp/yahoo-panoptes-snmp-net-snmp-configure-{0}.log".format(BUILD_START_TIME), 'w+') as log:
                    check_call(configurecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
 
-                print(colored(">>>>>>>>>>> Building net-snmp library in {}".format(NETSNMP_SRC_PATH), "cyan"))
+                print(">>>>>>>>>>> Building net-snmp library in {}".format(NETSNMP_SRC_PATH))
                 with open("/tmp/yahoo-panoptes-snmp-net-snmp-make.log".format(BUILD_START_TIME), 'w+') as log:
                    check_call(makecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
 
-                print(colored(">>>>>>>>>>> Copying shared objects", "cyan"))
+                print(">>>>>>>>>>> Copying shared objects")
                 self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so.30')
                 self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so')
                 self.copy_file(NETSNMP_SO_PATH, '{0}/yahoo_panoptes_snmp/libnetsnmp.so'.format(self.build_lib))
                 self.copy_file(NETSNMP_SO_PATH, '{0}/yahoo_panoptes_snmp/libnetsnmp.so.30'.format(self.build_lib))
-                print(colored(">>>>>>>>>>> Done building net-snmp library", "green"))
+                print(">>>>>>>>>>> Done building net-snmp library")
 
         self.execute(_compile, [], 'Building dependencies for {}'.format(PLATFORM))
         build_ext.run(self)
