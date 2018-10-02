@@ -10,7 +10,7 @@ before_install:
 - sudo /usr/bin/download-mibs
 - snmpd -C -c tests/snmpd.conf
 - mkdir -m 0755 ~/.snmp
-- echo 'mibs +SNMPv2-MIB:+NET-SNMP-AGENT-MIB' > ~/.snmp/snmp.conf
+- echo 'mibs +SNMPv2-MIB:NET-SNMP-AGENT-MIB' > ~/.snmp/snmp.conf
 - ls -l /usr/share/snmp/mibs
 - ls -l /usr/share/mibs
 - ls -l /usr/share/mibs/ietf
