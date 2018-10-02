@@ -15,7 +15,7 @@ before_install:
 - cp /usr/share/snmp/mibs/* ~/.snmp/mibs
 - echo 'mibs +SNMPv2-MIB:NET-SNMP-AGENT-MIB' > ~/.snmp/snmp.conf
 install:
-- pip install --upgrade pip setuptools tox termcolor virtualenv coveralls
+- pip install --upgrade pip setuptools tox virtualenv coveralls
 script:
 - tox -v
 after_script:
