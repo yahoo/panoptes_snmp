@@ -23,10 +23,10 @@ on top of [Net-SNMP](http://www.net-snmp.org) C library.
 The key differences from the upstream library are:
 
 - Includes Net-SNMP source code which is used to build shared objects during installation leading to self contained distributions
-- Locks down options for the Net-SNMP library: for example, SNMPv1 is disabled and TLS is enabled
+- Locks down options for the Net-SNMP library: for example, SNMPv1 is and applications are disabled
 - No MIBs are include in the distribution - this is by design since using symbolic OIDs is slow
 - A Python based implementation of bulk_walk
-- Support for tunneled SNMP connections
+- Fix support for tunneled SNMP connections
 
 ## Install
 
