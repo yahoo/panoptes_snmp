@@ -62,7 +62,7 @@ if PLATFORM == 'darwin':  # OS X
             print('Could not parse OpenSSL version from brew output - assuming < 1.1.0')
     else:
         sys.exit('Cannot install on Mac OS X without a brew installed openssl')
-elif PLATFORM == 'linux':
+elif PLATFORM == 'linux2':
     openssl = os.popen('openssl version').read()
     tokens = shlex.split(openssl.replace('\'', ''))
     try:
