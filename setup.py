@@ -29,17 +29,48 @@ NETSNMP_SO_PATH = os.path.join(NETSNMP_SRC_PATH, 'snmplib', '.libs', 'libnetsnmp
 libdirs = []
 incdirs = ['{0}/include'.format(NETSNMP_SRC_PATH)]
 
+openssl_gt_1_1_0 = False
+
+
+def set_openssl_version_flag(version):
+    global openssl_gt_1_1_0
+
+    try:
+        components = version.split('.')
+        if components:
+            if int(components[0]) == 1 and int(components[1]) >= 1:
+                openssl_gt_1_1_0 = True
+    except:
+        print('Error parsing OpenSSL version: {}'.format(version))
+
+
 if PLATFORM == 'darwin':  # OS X
     brew = os.popen('brew info openssl').read()
     if 'command not found' not in brew:
         # /usr/local/opt is the default brew `opt` prefix, however the user
         # may have installed it elsewhere
-        libdirs += [flag.split('=')[1].split('-L')[1] for flag in shlex.split(brew.replace('\'', '')) if
+        tokens = shlex.split(brew.replace('\'', ''))
+        libdirs += [flag.split('=')[1].split('-L')[1] for flag in tokens if
                     flag.startswith('LDFLAGS')]  # noqa
-        incdirs += [flag.split('=')[1].split('-I')[1] for flag in shlex.split(brew.replace('\'', '')) if
+        incdirs += [flag.split('=')[1].split('-I')[1] for flag in tokens if
                     flag.startswith('CPPFLAGS')]  # noqa
+
+        try:
+            openssl_version = tokens[2]
+            set_openssl_version_flag(openssl_version)
+        except:
+            print('Could not parse OpenSSL version from brew output - assuming < 1.1.0')
     else:
         sys.exit('Cannot install on Mac OS X without a brew installed openssl')
+elif PLATFORM == 'linux':
+    openssl = os.popen('openssl version').read()
+    tokens = shlex.split(openssl.replace('\'', ''))
+    try:
+        openssl_version = tokens[1]
+        set_openssl_version_flag(openssl_version)
+    except:
+        print('Could not parse OpenSSL version from openssl output - assuming < 1.1.0')
+
 
 if ('CI' in os.environ) or ('CONTINUOUS_INTEGRATION' in os.environ):
     if 'SCREWDRIVER' in os.environ:
@@ -90,6 +121,11 @@ class BuildEasySNMPExt(build_ext):
     def run(self):
         def _compile():
                 print(">>>>>>>>>>> Going to build net-snmp library")
+
+                if openssl_gt_1_1_0:
+                    print('>>>>>>>>>>> OpenSSL version > 1.1.0, patching source code')
+                    patchcmd = "patch -p 1 < patches/openssl-1.1.0.patch"
+                    check_call(patchcmd, cwd=NETSNMP_SRC_PATH)
 
                 configureargs = "--with-defaults --with-default-snmp-version=2 --with-sys-contact=root@localhost " \
                                 "--with-logfile=/var/log/snmpd.log " \
