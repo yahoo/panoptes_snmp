@@ -94,7 +94,7 @@ class BuildEasySNMPExt(build_ext):
                 configureargs = "--with-defaults --with-default-snmp-version=2 --with-sys-contact=root@localhost " \
                                 "--with-logfile=/var/log/snmpd.log " \
                                 "--with-persistent-directory=/var/net-snmp --with-sys-location=unknown " \
-                                "--with-transports=TLSTCP --without-rpm"
+                                "--without-rpm"
 
                 featureflags = '--enable-reentrant --disable-debugging --disable-embedded-perl ' \
                                '--without-perl-modules --enable-static=no --disable-snmpv1 --disable-applications ' \
@@ -103,7 +103,7 @@ class BuildEasySNMPExt(build_ext):
                 configurecmd = "./configure --build={0}-unknown-linux-gnu --host={0}-unknown-linux-gnu " \
                                "{1} {2}".format(MACHINE, configureargs, featureflags).split(' ')
 
-                configurecmd += ['--with-security-modules=usm tsm']
+                configurecmd += ['--with-security-modules=usm tsm', '--with-out-transports=DTLSUDP TLSTCP']
                 makecmd = ['make']
 
                 print(">>>>>>>>>>> Configuring with {0}".format(' '.join(configurecmd)))
@@ -111,7 +111,7 @@ class BuildEasySNMPExt(build_ext):
                    check_call(configurecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
 
                 print(">>>>>>>>>>> Building net-snmp library in {}".format(NETSNMP_SRC_PATH))
-                with open("/tmp/yahoo-panoptes-snmp-net-snmp-make.log".format(BUILD_START_TIME), 'w+') as log:
+                with open("/tmp/yahoo-panoptes-snmp-net-snmp-make-{0}.log".format(BUILD_START_TIME), 'w+') as log:
                    check_call(makecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
 
                 print(">>>>>>>>>>> Copying shared objects")
