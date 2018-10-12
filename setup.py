@@ -5,7 +5,7 @@ import sys
 import time
 import shlex
 from distutils.command.build_ext import build_ext
-from subprocess import check_call
+from subprocess import check_call, CalledProcessError
 
 from setuptools import setup, Extension
 from setuptools.command.test import test as TestCommand
@@ -120,42 +120,62 @@ class BuildEasySNMPExt(build_ext):
 
     def run(self):
         def _compile():
-                print(">>>>>>>>>>> Going to build net-snmp library")
-
+            def _patch():
                 if openssl_gt_1_1_0:
-                    print('>>>>>>>>>>> OpenSSL version > 1.1.0, patching source code')
-                    patchcmd = "patch -p 1 < patches/openssl-1.1.0.patch"
-                    check_call(patchcmd, cwd=NETSNMP_SRC_PATH)
+                    print('>>>>>>>>>>> OpenSSL version > 1.1.0, checking if already patched')
+                    patchcmd = ["patch", "-p1", "--ignore-whitespace"]
+                    patchcheck = patchcmd + ["-N", "--dry-run", "--silent"]
 
-                configureargs = "--with-defaults --with-default-snmp-version=2 --with-sys-contact=root@localhost " \
-                                "--with-logfile=/var/log/snmpd.log " \
-                                "--with-persistent-directory=/var/net-snmp --with-sys-location=unknown " \
-                                "--without-rpm"
+                    try:
+                        patch = open("{}/patches/openssl-1.1.0.patch".format(NETSNMP_SRC_PATH))
+                        check_call(patchcheck, cwd=NETSNMP_SRC_PATH, stdin=patch)
+                    except CalledProcessError:
+                        print('>>>>>>>>>>> Patch already applied, skipping')
+                        return
 
-                featureflags = '--enable-reentrant --disable-debugging --disable-embedded-perl ' \
-                               '--without-perl-modules --enable-static=no --disable-snmpv1 --disable-applications ' \
-                               '--disable-manuals --with-libs=-lpthread'
+                    print('>>>>>>>>>>> Patch not applied, applying')
 
-                configurecmd = "./configure --build={0}-unknown-linux-gnu --host={0}-unknown-linux-gnu " \
-                               "{1} {2}".format(MACHINE, configureargs, featureflags).split(' ')
+                    try:
+                        patch = open("{}/patches/openssl-1.1.0.patch".format(NETSNMP_SRC_PATH))
+                        check_call(patchcmd, cwd=NETSNMP_SRC_PATH, stdin=patch)
+                    except CalledProcessError:
+                        sys.exit('>>>>>>>>>>> OpenSSL version 1.1.0 patch failed, aborting')
 
-                configurecmd += ['--with-security-modules=usm tsm', '--with-out-transports=DTLSUDP TLSTCP']
-                makecmd = ['make']
+            print(">>>>>>>>>>> Going to build net-snmp library")
 
-                print(">>>>>>>>>>> Configuring with {0}".format(' '.join(configurecmd)))
-                with open("/tmp/yahoo-panoptes-snmp-net-snmp-configure-{0}.log".format(BUILD_START_TIME), 'w+') as log:
-                   check_call(configurecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
+            _patch()
 
-                print(">>>>>>>>>>> Building net-snmp library in {}".format(NETSNMP_SRC_PATH))
-                with open("/tmp/yahoo-panoptes-snmp-net-snmp-make-{0}.log".format(BUILD_START_TIME), 'w+') as log:
-                   check_call(makecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
+            configureargs = "--with-defaults --with-default-snmp-version=2 --with-sys-contact=root@localhost " \
+                            "--with-logfile=/var/log/snmpd.log " \
+                            "--with-persistent-directory=/var/net-snmp --with-sys-location=unknown " \
+                            "--without-rpm"
 
-                print(">>>>>>>>>>> Copying shared objects")
-                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so.30')
-                self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so')
-                self.copy_file(NETSNMP_SO_PATH, '{0}/yahoo_panoptes_snmp/libnetsnmp.so'.format(self.build_lib))
-                self.copy_file(NETSNMP_SO_PATH, '{0}/yahoo_panoptes_snmp/libnetsnmp.so.30'.format(self.build_lib))
-                print(">>>>>>>>>>> Done building net-snmp library")
+            featureflags = '--enable-reentrant --disable-debugging --disable-embedded-perl ' \
+                           '--without-perl-modules --enable-static=no --disable-snmpv1 --disable-applications ' \
+                           '--disable-manuals --with-libs=-lpthread'
+
+            configurecmd = "./configure --build={0}-unknown-linux-gnu --host={0}-unknown-linux-gnu " \
+                           "{1} {2}".format(MACHINE, configureargs, featureflags).split(' ')
+
+            configurecmd += ['--with-security-modules=usm tsm', '--with-out-transports=DTLSUDP TLSTCP']
+            # Disable all gcc warnings
+            os.environ['CFLAGS'] = '-w'
+            makecmd = ['make']
+
+            print(">>>>>>>>>>> Configuring with {0}".format(' '.join(configurecmd)))
+            with open("/tmp/yahoo-panoptes-snmp-net-snmp-configure-{0}.log".format(BUILD_START_TIME), 'w+') as log:
+               check_call(configurecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
+
+            print(">>>>>>>>>>> Building net-snmp library in {}".format(NETSNMP_SRC_PATH))
+            with open("/tmp/yahoo-panoptes-snmp-net-snmp-make-{0}.log".format(BUILD_START_TIME), 'w+') as log:
+               check_call(makecmd, cwd=NETSNMP_SRC_PATH, stdout=log)
+
+            print(">>>>>>>>>>> Copying shared objects")
+            self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so.30')
+            self.copy_file(NETSNMP_SO_PATH, 'yahoo_panoptes_snmp/libnetsnmp.so')
+            self.copy_file(NETSNMP_SO_PATH, '{0}/yahoo_panoptes_snmp/libnetsnmp.so'.format(self.build_lib))
+            self.copy_file(NETSNMP_SO_PATH, '{0}/yahoo_panoptes_snmp/libnetsnmp.so.30'.format(self.build_lib))
+            print(">>>>>>>>>>> Done building net-snmp library")
 
         self.execute(_compile, [], 'Building dependencies for {}'.format(PLATFORM))
         build_ext.run(self)
