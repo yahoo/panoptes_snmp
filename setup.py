@@ -45,23 +45,15 @@ def set_openssl_version_flag(version):
 
 
 if PLATFORM == 'darwin':  # OS X
-    brew = os.popen('brew info openssl').read()
+    brew = os.popen('brew info net-snmp').read()
     if 'command not found' not in brew:
-        # /usr/local/opt is the default brew `opt` prefix, however the user
-        # may have installed it elsewhere
-        tokens = shlex.split(brew.replace('\'', ''))
-        libdirs += [flag.split('=')[1].split('-L')[1] for flag in tokens if
-                    flag.startswith('LDFLAGS')]  # noqa
-        incdirs += [flag.split('=')[1].split('-I')[1] for flag in tokens if
-                    flag.startswith('CPPFLAGS')]  # noqa
-
         try:
-            openssl_version = tokens[2]
-            set_openssl_version_flag(openssl_version)
+            openssl_install_dir = brew.split('\n')[3].split()[0]
         except:
-            print('Could not parse OpenSSL version from brew output - assuming < 1.1.0')
-    else:
-        sys.exit('Cannot install on Mac OS X without a brew installed openssl')
+            sys.exit('Cannot install on Mac OS X without a brew installed net-snmp')
+
+        libdirs += ['/'.join([openssl_install_dir, 'lib'])]
+        incdirs += ['/'.join([openssl_install_dir, 'include'])]
 elif PLATFORM == 'linux2':
     openssl = os.popen('openssl version').read()
     tokens = shlex.split(openssl.replace('\'', ''))
@@ -177,7 +169,8 @@ class BuildEasySNMPExt(build_ext):
             self.copy_file(NETSNMP_SO_PATH, '{0}/yahoo_panoptes_snmp/libnetsnmp.so.30'.format(self.build_lib))
             print(">>>>>>>>>>> Done building net-snmp library")
 
-        self.execute(_compile, [], 'Building dependencies for {}'.format(PLATFORM))
+        if PLATFORM == 'linux2':
+            self.execute(_compile, [], 'Building dependencies for {}'.format(PLATFORM))
         build_ext.run(self)
 
 
