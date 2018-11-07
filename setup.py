@@ -10,14 +10,13 @@ from subprocess import check_call, CalledProcessError
 from setuptools import setup, Extension
 from setuptools.command.test import test as TestCommand
 
-version = '0.2.5'
+version = '0.2.5.116'
 
 logger = logging.getLogger(__name__)
 
 BUILD_START_TIME = int(time.time())
 PLATFORM = sys.platform
 MACHINE = platform.machine()
-IN_CI_PIPELINE = False
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 NETSNMP_NAME = 'net-snmp'
@@ -62,21 +61,6 @@ elif PLATFORM == 'linux2':
         set_openssl_version_flag(openssl_version)
     except:
         print('Could not parse OpenSSL version from openssl output - assuming < 1.1.0')
-
-
-if ('CI' in os.environ) or ('CONTINUOUS_INTEGRATION' in os.environ):
-    if 'SCREWDRIVER' in os.environ:
-        build_number = os.environ['BUILD_NUMBER']
-    elif 'TRAVIS' in os.environ:
-        build_number = os.environ['TRAVIS_BUILD_NUMBER']
-    else:
-        sys.exit('We currently only support building CI builds with Screwdriver or Travis CI')
-
-    IN_CI_PIPELINE = True
-    version = '.'.join([version, build_number])
-else:
-    version = '.'.join([version, str(BUILD_START_TIME)])
-
 
 # Setup the py.test class for use with the test command
 class PyTest(TestCommand):
