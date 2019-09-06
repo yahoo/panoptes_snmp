@@ -19,10 +19,6 @@ if PLATFORM not in ['darwin', 'linux']:
     sys.exit('Can only build on Linux or Mac OS X')
 
 MACHINE = platform.machine()
-
-# Use BUILD_NUMBER from Screwdriver/Travis etc., if available
-version += os.environ.get('BUILD_NUMBER', '0')
-
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 NETSNMP_NAME = 'net-snmp'
 NETSNMP_VERSION = '5.7.3'
