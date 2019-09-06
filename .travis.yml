@@ -19,7 +19,7 @@ install:
 script:
 - tox -v
 after_script:
-- pkill snmpd
+- sudo pkill snmpd
 after_success: coveralls
 notifications:
   email: false
