@@ -2,6 +2,7 @@ import logging
 import os
 import platform
 import sys
+import shlex
 
 from distutils.command.build_ext import build_ext
 from subprocess import check_call
