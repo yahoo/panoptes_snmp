@@ -113,7 +113,7 @@ class BuildEasySNMPExt(build_ext):
 
     def run(self):
         def _patch():
-            if PLATFORM=="linux" AND openssl_gt_1_1_0:
+            if PLATFORM=="linux" and openssl_gt_1_1_0:
                 print('>>>>>>>>>>> OpenSSL version > 1.1.0, checking if already patched')
                 patchcmd = ["patch", "-p1", "--ignore-whitespace"]
                 patchcheck = patchcmd + ["-N", "--dry-run", "--silent"]
