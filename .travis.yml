@@ -4,7 +4,6 @@ python:
 - 2.7
 env:
 - LANG=en_US.UTF-8
-- NET_SNMP_VERSION=5.7.3
 before_install:
 - sudo apt-get update
 - sudo apt-get install -y autoconf libtool make libperl-dev python-dev
