@@ -42,9 +42,30 @@ incdirs = ['{0}/include'.format(NETSNMP_SRC_PATH)]
 extra_compile_args = ['-Wno-unused-function']
 extra_link_args = []
 
+openssl_gt_1_1_0 = False
+
+def set_openssl_version_flag(version):
+    global openssl_gt_1_1_0
+
+    try:
+        components = version.split('.')
+        if components:
+            if int(components[0]) == 1 and int(components[1]) >= 1:
+                openssl_gt_1_1_0 = True
+    except:
+        print('Error parsing OpenSSL version: {}'.format(version))
+
 if PLATFORM == 'darwin':
     extra_compile_args.append('-Wsometimes-uninitialized')
     extra_link_args = ['-Wl,-rpath,@loader_path/.']
+else:
+    openssl = os.popen('openssl version').read()
+    tokens = shlex.split(openssl.replace('\'', ''))
+    try:
+        openssl_version = tokens[1]
+        set_openssl_version_flag(openssl_version)
+    except:
+        print('Could not parse OpenSSL version from openssl output - assuming < 1.1.0')
 
 BUILD_WHEEL = True if 'bdist_wheel' in sys.argv else False
 
@@ -91,23 +112,46 @@ class BuildEasySNMPExt(build_ext):
             self.rpath = ['$ORIGIN']
 
     def run(self):
-        print(">>>>>>>>>>> Going to build net-snmp library...")
+        def _patch():
+            if PLATFORM=="linux" AND openssl_gt_1_1_0:
+                print('>>>>>>>>>>> OpenSSL version > 1.1.0, checking if already patched')
+                patchcmd = ["patch", "-p1", "--ignore-whitespace"]
+                patchcheck = patchcmd + ["-N", "--dry-run", "--silent"]
 
-        configureargs = '--with-defaults --with-default-snmp-version=2 --with-sys-contact=@@no.where ' \
-                        '--with-sys-location=unknown --without-rpm --without-perl-modules --without-openssl'
+                try:
+                    patch = open("{}/patches/openssl-1.1.0.patch".format(NETSNMP_SRC_PATH))
+                    check_call(patchcheck, cwd=NETSNMP_SRC_PATH, stdin=patch)
+                except CalledProcessError:
+                    print('>>>>>>>>>>> Patch already applied, skipping')
+                    return
 
-        featureflags = '--enable-reentrant --disable-debugging --disable-embedded-perl --enable-static=no ' \
-                       '--disable-snmpv1 --disable-applications --disable-manuals'
+                print('>>>>>>>>>>> Patch not applied, applying')
+
+                try:
+                    patch = open("{}/patches/openssl-1.1.0.patch".format(NETSNMP_SRC_PATH))
+                    check_call(patchcmd, cwd=NETSNMP_SRC_PATH, stdin=patch)
+                except CalledProcessError:
+                    sys.exit('>>>>>>>>>>> OpenSSL version 1.1.0 patch failed, aborting')
+
+
+        configureargs = "--with-defaults --with-default-snmp-version=2 --with-sys-contact=root@localhost " \
+                        "--with-logfile=/var/log/snmpd.log " \
+                        "--with-persistent-directory=/var/net-snmp --with-sys-location=unknown " \
+                        "--without-rpm"
+
+        featureflags = "--enable-reentrant --disable-debugging --disable-embedded-perl " \
+                       "--without-perl-modules --enable-static=no --disable-snmpv1 --disable-applications " \
+                       "--disable-manuals --with-libs=-lpthread"
+
 
         if PLATFORM == 'linux':
             configureargs += " --build={0}-unknown-linux-gnu --host={0}-unknown-linux-gnu ".format(MACHINE)
-            featureflags += " --with-libs=-lpthread"
         else:
             featureflags += " --disable-agent --disable-mibs"
 
         configurecmd = "./configure {0} {1}".format(configureargs, featureflags).split(' ')
 
-        configurecmd += ['--with-security-modules=usm tsm']
+        configurecmd += ['--with-security-modules=usm tsm', '--with-out-transports=DTLSUDP TLSTCP']
 
         makecmd = ['make']
 
