@@ -94,15 +94,15 @@ class BuildEasySNMPExt(build_ext):
         print(">>>>>>>>>>> Going to build net-snmp library...")
 
         configureargs = '--with-defaults --with-default-snmp-version=2 --with-sys-contact=@@no.where ' \
-                        '--with-sys-location=yahoo --without-rpm --without-perl-modules'
+                        '--with-sys-location=unknown --without-rpm --without-perl-modules --without-openssl'
 
         featureflags = '--enable-reentrant --disable-debugging --disable-embedded-perl --enable-static=no ' \
                        '--disable-snmpv1 --disable-applications --disable-manuals'
 
         if PLATFORM == 'linux':
             configureargs += " --build={0}-unknown-linux-gnu --host={0}-unknown-linux-gnu ".format(MACHINE)
+            featureflags += " --with-libs=-lpthread"
         else:
-            configureargs += " --without-openssl"
             featureflags += " --disable-agent --disable-mibs"
 
         configurecmd = "./configure {0} {1}".format(configureargs, featureflags).split(' ')
