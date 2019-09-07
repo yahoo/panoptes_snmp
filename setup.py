@@ -148,6 +148,7 @@ class BuildEasySNMPExt(build_ext):
         if PLATFORM == 'linux':
             configureargs += " --build={0}-unknown-linux-gnu --host={0}-unknown-linux-gnu ".format(MACHINE)
         else:
+            configureargs += " --without-openssl"
             featureflags += " --disable-agent --disable-mibs"
 
         configurecmd = "./configure {0} {1}".format(configureargs, featureflags).split(' ')
