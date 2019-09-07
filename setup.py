@@ -10,7 +10,7 @@ from subprocess import check_call
 from setuptools import setup, Extension
 from setuptools.command.test import test as TestCommand
 
-version = '0.2.5.117'
+version = '0.2.5.118'
 
 logger = logging.getLogger(__name__)
 
