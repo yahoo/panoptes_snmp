@@ -188,8 +188,9 @@ class BuildEasySNMPExt(build_ext):
 setup(
     name='yahoo_panoptes_snmp',
     version=version,
-    description='A blazingly fast and Pythonic SNMP library based on the official Net-SNMP bindings',
+    description='A Python wrapper on Net-SNMP',
     long_description=long_description,
+    long_description_content_type="text/markdown",
     author='Network Automation @ Verizon Media',
     author_email='network-automation@verizonmedia.com',
     url='https://github.com/yahoo/panoptes_snmp',
