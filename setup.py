@@ -46,7 +46,6 @@ if PLATFORM == 'darwin':
     extra_compile_args.append('-Wsometimes-uninitialized')
     extra_link_args = ['-Wl,-rpath,@loader_path/.']
 
-print(sys.argv)
 BUILD_WHEEL = True if 'bdist_wheel' in sys.argv else False
 
 
