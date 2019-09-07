@@ -1,8 +1,10 @@
 language: python
-dist: trusty
-python:
-- 2.7
-- 3.6
+matrix:
+  include:
+    - name: "Python 2.7 on Xenial Linux"
+      python: 2.7           # this works for Linux but is ignored on macOS or Windows
+    - name: "Python 3.6 on Xenial Linux"
+      python: 3.6           # this works for Linux but is ignored on macOS or Windows
 env:
 - LANG=en_US.UTF-8
 before_install:
